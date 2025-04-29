@@ -1,0 +1,101 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-black: #000000;
+  --color-charcoal: #333333;
+  --color-medium-gray: #828282;
+  --color-off-white: #F5F5F5;
+  --color-white: #FFFFFF;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-white);
+  color: var(--color-black);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Dark mode styles */
+.dark body {
+  background-color: var(--color-black);
+  color: var(--color-white);
+}
+
+/* Light mode styles */
+.light body {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+/* Custom color classes */
+.bg-black {
+  background-color: var(--color-black);
+}
+
+.bg-charcoal {
+  background-color: var(--color-charcoal);
+}
+
+.bg-medium-gray {
+  background-color: var(--color-medium-gray);
+}
+
+.bg-off-white {
+  background-color: var(--color-off-white);
+}
+
+.bg-white {
+  background-color: var(--color-white);
+}
+
+.text-black {
+  color: var(--color-black);
+}
+
+.text-charcoal {
+  color: var(--color-charcoal);
+}
+
+.text-medium-gray {
+  color: var(--color-medium-gray);
+}
+
+.text-off-white {
+  color: var(--color-off-white);
+}
+
+.text-white {
+  color: var(--color-white);
+}
+
+.border-black {
+  border-color: var(--color-black);
+}
+
+.border-charcoal {
+  border-color: var(--color-charcoal);
+}
+
+.border-medium-gray {
+  border-color: var(--color-medium-gray);
+}
+
+.border-off-white {
+  border-color: var(--color-off-white);
+}
+
+.border-white {
+  border-color: var(--color-white);
+} 
