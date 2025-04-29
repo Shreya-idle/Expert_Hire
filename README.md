@@ -42,17 +42,6 @@ npm run build
 npx gh-pages -d dist
   </code></pre>
 
-  <h2>🛠 Common Issues</h2>
-  <ul>
-    <li>If your site is blank after deploying:
-      <ul>
-        <li>Make sure paths are correct: use <code>HashRouter</code> or Vite's <code>base</code> config if needed.</li>
-        <li>Verify your output folder is named <code>dist</code> and contains your built app.</li>
-        <li>In Vercel: check your <code>output directory</code> is set to <code>dist</code>.</li>
-      </ul>
-    </li>
-  </ul>
-
   <h2>📄 License</h2>
   <p>MIT License. Free to use and modify.</p>
 </body>
