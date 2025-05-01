@@ -1,6 +1,13 @@
 Both main and project2 branch have projects for the same context , couldnt deply due to build error.
+video 1: main branch 
 
 https://github.com/user-attachments/assets/d93620bf-daf3-4225-8584-71a266311a89
+video 2: project2 branch 
+
+
+https://github.com/user-attachments/assets/36c7dc09-098b-4e70-9b73-85d463726233
+
+
 
 <!DOCTYPE html>
 <html lang="en">
