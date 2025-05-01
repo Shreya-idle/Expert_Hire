@@ -38,6 +38,10 @@
 
   <pre><code>
 npm install --save-dev gh-pages
+
+https://github.com/user-attachments/assets/6a318e2d-920f-4500-80f0-3d23c84180e4
+
+
 npm run build
 npx gh-pages -d dist
   </code></pre>
