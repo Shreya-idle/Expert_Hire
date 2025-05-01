@@ -1,64 +1,73 @@
 import { useState, useEffect } from "react";
 import ArticleCard from "./ArticleCard";
-import Pagination from "./Pagination";
 import { useAllArticles, useArticlesByCategory } from "@/hooks/useArticles";
 
 export default function RecentArticles({ categoryFilter }) {
   const [currentPage, setCurrentPage] = useState(1);
   const articlesPerPage = 4;
-  
+
   // Reset to page 1 when category changes
   useEffect(() => {
     setCurrentPage(1);
   }, [categoryFilter]);
-  
-  // Fetch appropriate articles based on whether category filter is active
+
+  // Fetch articles
   const { data: allArticles = [], isLoading: isLoadingAll } = useAllArticles();
-  const { data: categoryArticles = [], isLoading: isLoadingCategory } = useArticlesByCategory(
-    categoryFilter || 'none'
-  );
-  
+  const { data: categoryArticles = [], isLoading: isLoadingCategory } =
+    useArticlesByCategory(categoryFilter || "none");
+
   const articles = categoryFilter ? categoryArticles : allArticles;
   const isLoading = categoryFilter ? isLoadingCategory : isLoadingAll;
-  
+
   // Pagination logic
   const totalArticles = articles.length;
   const totalPages = Math.ceil(totalArticles / articlesPerPage);
-  
+
   const handlePageChange = (page) => {
-    setCurrentPage(page);
-    // Scroll to top of articles section
-    window.scrollTo({
-      top: document.getElementById('recent-articles').offsetTop - 100,
-      behavior: 'smooth'
-    });
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+      window.scrollTo({
+        top: document.getElementById("recent-articles").offsetTop - 100,
+        behavior: "smooth",
+      });
+    }
   };
-  
-  // Get current articles for pagination
+
   const indexOfLastArticle = currentPage * articlesPerPage;
   const indexOfFirstArticle = indexOfLastArticle - articlesPerPage;
   const currentArticles = articles.slice(indexOfFirstArticle, indexOfLastArticle);
-  
+
   return (
-    <section id="recent-articles">
+    <section id="recent-articles" className="mt-10">
       <div className="flex justify-between items-baseline mb-8">
         <h2 className="text-2xl font-display font-bold">
-          {categoryFilter ? `${categoryFilter} Articles` : 'Recent Articles'}
+          {categoryFilter ? `${categoryFilter} Articles` : "Recent Articles"}
         </h2>
-        
+
         {categoryFilter && (
           <button
             onClick={() => window.location.href = '/'}
             className="text-sm flex items-center hover:underline text-gray-600 hover:text-gray-900"
           >
-            <svg className="w-4 h-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            <svg
+              className="w-4 h-4 mr-1"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              />
             </svg>
             All Categories
           </button>
         )}
       </div>
-      
+
       {isLoading ? (
         <div className="space-y-8">
           {[...Array(3)].map((_, i) => (
@@ -95,8 +104,8 @@ export default function RecentArticles({ categoryFilter }) {
       ) : (
         <>
           <div className="divide-y divide-gray-100">
-            {currentArticles.map(article => (
-              <ArticleCard 
+            {currentArticles.map((article) => (
+              <ArticleCard
                 key={article.id}
                 id={article.id}
                 title={article.title}
@@ -109,13 +118,39 @@ export default function RecentArticles({ categoryFilter }) {
               />
             ))}
           </div>
-          
+
+          {/* Numbered Pagination */}
           {totalPages > 1 && (
-            <Pagination 
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-            />
+            <div className="flex justify-center mt-10 space-x-2 items-center flex-wrap">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className={`px-3 py-1 border rounded ${currentPage === 1 ? 'text-gray-400 cursor-not-allowed' : 'hover:bg-gray-200'}`}
+              >
+                ← Prev
+              </button>
+
+              {[...Array(totalPages)].map((_, index) => {
+                const page = index + 1;
+                return (
+                  <button
+                    key={page}
+                    onClick={() => handlePageChange(page)}
+                    className={`px-3 py-1 border rounded ${currentPage === page ? 'bg-blue-500 text-white' : 'hover:bg-gray-100'}`}
+                  >
+                    {page}
+                  </button>
+                );
+              })}
+
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className={`px-3 py-1 border rounded ${currentPage === totalPages ? 'text-gray-400 cursor-not-allowed' : 'hover:bg-gray-200'}`}
+              >
+                Next →
+              </button>
+            </div>
           )}
         </>
       )}

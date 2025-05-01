@@ -18,7 +18,7 @@ const categories = [
 ];
 
 export default function Home() {
-  const { data: articles = [] } = useAllArticles();
+  const { data: articles = [], isLoading } = useAllArticles();
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -30,6 +30,14 @@ export default function Home() {
     return matchesCategory && matchesSearch;
   });
 
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center text-muted-foreground">Loading articles...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-off-white dark:bg-black min-h-screen">
       <HeroCarousel />
@@ -38,13 +46,11 @@ export default function Home() {
       <div className="container mx-auto px-4 py-16">
         <h2 className="text-3xl font-serif mb-8 text-black dark:text-white">Latest Articles</h2>
         <div className="mb-16">
-          <Carousel>
-            {filteredArticles.slice(0, 4).map((article) => (
-              <div key={article.id} className="px-2">
-                <ArticleCard article={article} />
-              </div>
-            ))}
-          </Carousel>
+          {filteredArticles.slice(0, 4).map((article) => (
+            <div key={article.id} className="px-2">
+              <ArticleCard article={article} />
+            </div>
+          ))}
         </div>
 
         <TravelGuide />
@@ -62,58 +68,32 @@ export default function Home() {
       </div>
 
       <div className="container mx-auto px-4 py-12">
-        {/* Hero Section with Carousel */}
-        <section className="mb-16">
-          <Carousel />
-        </section>
-
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
-          <div className="lg:col-span-3">
-            {/* Search Bar */}
-            <div className="mb-12">
-              <input
-                type="text"
-                placeholder="Search articles..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-4 py-3 bg-white dark:bg-black border-2 border-black dark:border-white text-black dark:text-white placeholder-medium-gray dark:placeholder-medium-gray focus:outline-none"
-              />
-            </div>
-
-            {/* Categories Section */}
-            <section className="mb-16">
-              <h2 className="font-serif text-2xl mb-8 text-black dark:text-white">Explore by Category</h2>
-              <Carousel>
-                {categories.map(category => (
-                  <div key={category.id} className="px-2">
-                    <CategoryCard
-                      category={category}
-                      onClick={setSelectedCategory}
-                      isActive={selectedCategory === category.name}
-                    />
-                  </div>
-                ))}
-              </Carousel>
-            </section>
-
-            {/* Recent Articles Section */}
-            <section>
-              <h2 className="font-serif text-2xl mb-8 text-black dark:text-white">Recent Articles</h2>
-              <Carousel>
-                {filteredArticles.map(article => (
-                  <div key={article.id} className="px-2">
-                    <ArticleCard article={article} />
-                  </div>
-                ))}
-              </Carousel>
-            </section>
-          </div>
-
-          {/* Sidebar */}
-          <div className="lg:col-span-1">
-            <Sidebar />
-          </div>
+        {/* Search Bar */}
+        <div className="mb-12">
+          <input
+            type="text"
+            placeholder="Search articles..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full px-4 py-3 bg-white dark:bg-black border-2 border-black dark:border-white text-black dark:text-white placeholder-medium-gray dark:placeholder-medium-gray focus:outline-none"
+          />
         </div>
+
+        {/* Categories Section */}
+        <section className="mb-16">
+          <h2 className="font-serif text-2xl mb-8 text-black dark:text-white">Explore by Category</h2>
+          <Carousel>
+            {categories.map(category => (
+              <div key={category.id} className="px-2">
+                <CategoryCard
+                  category={category}
+                  onClick={setSelectedCategory}
+                  isActive={selectedCategory === category.name}
+                />
+              </div>
+            ))}
+          </Carousel>
+        </section>
       </div>
     </div>
   );

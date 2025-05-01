@@ -20,14 +20,14 @@ export default function Header() {
     >
       <div className="container mx-auto px-4 py-4">
         <div className="flex justify-between items-center">
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            transition={{ duration: 0.2 }}
-          >
-            <Link href="/">
-              <a className="text-2xl font-bold text-black dark:text-white">Travel Blog</a>
-            </Link>
-          </motion.div>
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.2 }}
+            >
+              <Link href="/" className="text-2xl font-bold text-black dark:text-white">
+                Travel Blog
+              </Link>
+            </motion.div>
 
           {/* Mobile menu button */}
           <motion.button
@@ -51,10 +51,11 @@ export default function Header() {
                 variants={navItemHover}
                 whileHover="hover"
               >
-                <Link href={item === 'Home' ? '/' : `/${item.toLowerCase().replace(' ', '-')}`}>
-                  <a className="text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black px-3 py-2 transition-colors">
-                    {item}
-                  </a>
+                <Link
+                  href={item === 'Home' ? '/' : `/${item.toLowerCase().replace(' ', '-')}`}
+                  className="text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black px-3 py-2 transition-colors"
+                >
+                  {item}
                 </Link>
               </motion.div>
             ))}
@@ -80,10 +81,11 @@ export default function Header() {
                 whileHover={{ x: 10 }}
                 transition={{ duration: 0.2 }}
               >
-                <Link href={item === 'Home' ? '/' : `/${item.toLowerCase().replace(' ', '-')}`}>
-                  <a className="text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black px-3 py-2 block transition-colors">
-                    {item}
-                  </a>
+                <Link
+                  href={item === 'Home' ? '/' : `/${item.toLowerCase().replace(' ', '-')}`}
+                  className="text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black px-3 py-2 block transition-colors"
+                >
+                  {item}
                 </Link>
               </motion.div>
             ))}

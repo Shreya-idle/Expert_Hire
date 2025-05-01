@@ -1,13 +1,17 @@
 import { useState, useEffect, useRef } from "react";
-import { Link } from "wouter";
-import { useFeaturedArticles } from "@/hooks/useArticles";
+import { Link, useLocation } from "wouter";
+import { useFeaturedArticles } from '@/hooks/useArticles';
+import { cn } from '@/lib/utils';
+import { Button } from './ui/button';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function HeroCarousel() {
-  const { data: articles = [] } = useFeaturedArticles();
+  const { data: articles = [], isLoading, error } = useFeaturedArticles();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const intervalRef = useRef(null);
-  
+  const [, setLocation] = useLocation();
+
   const nextSlide = () => {
     setCurrentIndex(prevIndex => 
       prevIndex === articles.length - 1 ? 0 : prevIndex + 1
@@ -22,26 +26,21 @@ export default function HeroCarousel() {
   
   const goToSlide = (index) => {
     setCurrentIndex(index);
-    // Reset timer when manually navigating
     setIsAutoPlaying(false);
     setTimeout(() => setIsAutoPlaying(true), 5000);
   };
   
-  // Setup auto-playing carousel
   useEffect(() => {
     if (articles.length <= 1 || !isAutoPlaying) return;
     
-    // Clear any existing interval first
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
     }
     
-    // Set up a new interval
     intervalRef.current = setInterval(() => {
       nextSlide();
     }, 5000);
     
-    // Clean up on unmount or when dependencies change
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
@@ -50,16 +49,34 @@ export default function HeroCarousel() {
     };
   }, [articles.length, isAutoPlaying]);
   
-  // Pause auto-play on hover
   const pauseAutoPlay = () => setIsAutoPlaying(false);
   const resumeAutoPlay = () => setIsAutoPlaying(true);
   
-  // Show loading state while articles are being fetched
+  if (isLoading) {
+    return (
+      <section className="relative h-[600px] bg-muted animate-pulse rounded-lg">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-muted-foreground">Loading featured articles...</div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="relative h-[600px] bg-muted rounded-lg">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-destructive">Error loading featured articles</div>
+        </div>
+      </section>
+    );
+  }
+  
   if (articles.length === 0) {
     return (
-      <section className="relative h-[600px] bg-gray-100 animate-pulse">
+      <section className="relative h-[600px] bg-muted rounded-lg">
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-gray-400">Loading featured articles...</div>
+          <div className="text-muted-foreground">No featured articles available</div>
         </div>
       </section>
     );
@@ -67,7 +84,7 @@ export default function HeroCarousel() {
   
   return (
     <section 
-      className="relative h-[600px] bg-black overflow-hidden"
+      className="relative h-[600px] overflow-hidden rounded-lg bg-card"
       onMouseEnter={pauseAutoPlay}
       onMouseLeave={resumeAutoPlay}
     >
@@ -77,58 +94,45 @@ export default function HeroCarousel() {
           style={{ transform: `translateX(-${currentIndex * 100}%)` }}
         >
           {articles.map((article) => (
-            <div key={article.id} className="carousel-item flex-none w-full h-full relative">
-              {/* Main slide content */}
+            <div key={article.id} className="w-full h-full flex-none relative">
               <div className="relative w-full h-full">
                 <img 
                   src={article.imageUrl} 
                   alt={article.title} 
                   className="w-full h-full object-cover" 
                 />
-                {/* Black overlay with gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                 
-                {/* Content */}
-                <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-12 lg:p-16 text-white">
+                <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-12 lg:p-16">
                   <div className="max-w-4xl">
-                    {/* Category tag */}
-                    <div className="mb-4">
-                      <Link href={`/?category=${article.category.toLowerCase()}`}>
-                        <span className="inline-block text-xs uppercase tracking-wider text-white border border-white/30 px-3 py-1.5 hover:bg-white/10 transition-colors">
-                          {article.category}
-                        </span>
-                      </Link>
-                    </div>
+                    <Button
+                      variant="outline"
+                      className="mb-4 hover:bg-background/20"
+                      onClick={() => setLocation(`/?category=${article.category.toLowerCase()}`)}
+                    >
+                      {article.category}
+                    </Button>
                     
-                    {/* Title */}
                     <Link href={`/articles/${article.id}`}>
-                      <h2 className="text-2xl md:text-3xl lg:text-4xl font-display font-bold mb-4 leading-tight hover:underline">
+                      <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 leading-tight text-white hover:underline">
                         {article.title}
                       </h2>
                     </Link>
                     
-                    {/* Author and metadata */}
-                    <div className="flex flex-wrap items-center text-sm text-white/80 mb-6 md:mb-8">
+                    <div className="flex flex-wrap items-center gap-4 text-sm text-white/80 mb-6 md:mb-8">
                       <span>By {article.authorName}</span>
-                      <span className="mx-2">•</span>
-                      <span>{new Date(article.submissionDate).toLocaleDateString('en-US', { 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric' 
-                      })}</span>
-                      <span className="mx-2">•</span>
+                      <span>•</span>
+                      <span>{article.submissionDate}</span>
+                      <span>•</span>
                       <span>{article.readingTime} min read</span>
                     </div>
                     
-                    {/* Read more button */}
-                    <Link href={`/articles/${article.id}`}>
-                      <span className="inline-flex items-center text-sm font-medium group cursor-pointer">
-                        READ ARTICLE
-                        <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                        </svg>
-                      </span>
-                    </Link>
+                    <Button asChild variant="default" className="group">
+                      <Link href={`/articles/${article.id}`}>
+                        Read Article
+                        <ChevronRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                      </Link>
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -136,34 +140,36 @@ export default function HeroCarousel() {
           ))}
         </div>
         
-        {/* Navigation arrows */}
-        <button 
-          className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 rounded-full p-3 text-white z-10 transition-colors"
+        <Button
+          variant="outline"
+          size="icon"
+          className="absolute left-4 top-1/2 -translate-y-1/2 bg-background/50 hover:bg-background/80"
           onClick={prevSlide}
-          aria-label="Previous slide"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
-        <button 
-          className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 rounded-full p-3 text-white z-10 transition-colors"
+          <ChevronLeft className="h-4 w-4" />
+          <span className="sr-only">Previous slide</span>
+        </Button>
+
+        <Button
+          variant="outline"
+          size="icon"
+          className="absolute right-4 top-1/2 -translate-y-1/2 bg-background/50 hover:bg-background/80"
           onClick={nextSlide}
-          aria-label="Next slide"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
+          <ChevronRight className="h-4 w-4" />
+          <span className="sr-only">Next slide</span>
+        </Button>
         
-        {/* Indicators */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex space-x-3 z-10">
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
           {articles.map((_, index) => (
             <button 
               key={index}
-              className={`w-2 h-2 rounded-full transition-all ${
-                index === currentIndex ? 'bg-white w-4' : 'bg-white/50'
-              }`}
+              className={cn(
+                "w-2 h-2 rounded-full transition-all",
+                index === currentIndex 
+                  ? "bg-white w-4" 
+                  : "bg-white/50 hover:bg-white/75"
+              )}
               onClick={() => goToSlide(index)}
               aria-label={`Go to slide ${index + 1}`}
             />
