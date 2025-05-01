@@ -12,7 +12,10 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'), // Now @ maps to src/
+      '@': path.resolve(__dirname, './src'), 
     },
   },
+  build: {
+    outDir: 'public'
+  }  
 });
